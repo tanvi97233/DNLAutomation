@@ -30,7 +30,7 @@ GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
 DEFAULT_MODEL = "llama-3.3-70b-versatile"
 REQUEST_TIMEOUT_SEC = 90
 
-SYSTEM_PROMPT = """You are an intelligence analyst for Thermo Fisher Scientific's Immunodiagnostics division, working under Evalusor.
+SYSTEM_PROMPT = """You are an intelligence analyst preparing a Daily Newsletter (DNL) for a specialty diagnostics business unit focused on immunodiagnostics, allergy, and autoimmune testing.
 
 Your job is to classify headlines as RELEVANT or NOT RELEVANT for the Daily Newsletter (DNL).
 

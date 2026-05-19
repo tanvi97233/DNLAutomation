@@ -31,6 +31,55 @@ st.set_page_config(
 )
 
 # ---------------------------------------------------------------------------
+# Simple login gate (hardcoded credentials for MVP)
+# ---------------------------------------------------------------------------
+# NOTE: Hardcoded creds are NOT secure for production. Move to env vars or a
+# real identity provider before any non-internal release.
+_AUTH_EMAIL = os.getenv("DNL_LOGIN_EMAIL", "dnladmin@automation.on")
+_AUTH_PASSWORD = os.getenv("DNL_LOGIN_PASSWORD", "123456789")
+
+if "auth_ok" not in st.session_state:
+    st.session_state.auth_ok = False
+
+
+def _render_login():
+    st.markdown(
+        """
+        <div style='max-width:420px;margin:80px auto 24px auto;padding:32px;
+        border-radius:12px;
+        background:linear-gradient(135deg,#1B3A5C 0%,#2A5A8C 100%);
+        color:#fff;text-align:center'>
+        <h2 style='margin:0 0 8px 0;color:#fff'>📰 DNL Automation</h2>
+        <div style='font-size:13px;opacity:0.9'>Sign in to continue</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    col_l, col_c, col_r = st.columns([1, 2, 1])
+    with col_c:
+        with st.form("login_form", clear_on_submit=False):
+            email = st.text_input("Email", placeholder="you@company.com")
+            password = st.text_input("Password", type="password")
+            submitted = st.form_submit_button(
+                "🔓 Sign in", use_container_width=True, type="primary"
+            )
+        if submitted:
+            if (
+                email.strip().lower() == _AUTH_EMAIL.lower()
+                and password == _AUTH_PASSWORD
+            ):
+                st.session_state.auth_ok = True
+                st.rerun()
+            else:
+                st.error("Invalid email or password.")
+
+
+if not st.session_state.auth_ok:
+    _render_login()
+    st.stop()
+
+
+# ---------------------------------------------------------------------------
 # Theme polish
 # ---------------------------------------------------------------------------
 st.markdown(
@@ -78,6 +127,12 @@ st.markdown(
 # Sidebar — controls
 # ---------------------------------------------------------------------------
 with st.sidebar:
+    st.caption(f"👤 Signed in as `{_AUTH_EMAIL}`")
+    if st.button("🚪 Sign out", use_container_width=True):
+        st.session_state.auth_ok = False
+        st.rerun()
+    st.divider()
+
     st.subheader("Date Range")
     default_start = date.today() - timedelta(days=3)
     default_end = date.today()
