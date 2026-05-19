@@ -35,7 +35,7 @@ st.set_page_config(
 # ---------------------------------------------------------------------------
 # NOTE: Hardcoded creds are NOT secure for production. Move to env vars or a
 # real identity provider before any non-internal release.
-_AUTH_EMAIL = os.getenv("DNL_LOGIN_EMAIL", "dnladmin@automation.on")
+_AUTH_EMAIL = os.getenv("DNL_LOGIN_EMAIL", "dnladmin@automation.in")
 _AUTH_PASSWORD = os.getenv("DNL_LOGIN_PASSWORD", "123456789")
 
 if "auth_ok" not in st.session_state:
