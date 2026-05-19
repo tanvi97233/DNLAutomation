@@ -1,7 +1,6 @@
 # DNL Automation Tool
 
-Internal MVP that automates the **Daily Newsletter (DNL)** workflow for
-Thermo Fisher Scientific's Immunodiagnostics division, produced by Evalusor.
+hey
 
 It replaces two manual processes:
 
