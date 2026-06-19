@@ -702,10 +702,9 @@ const NAV_GROUPS = [
 
 let currentPageId = 'analytics';
 
-// URL of the original DNL Streamlit app (app_legacy.py).
-// Started via: `streamlit run app_legacy.py --server.port 8502`
-// or via the included `run_all.ps1` launcher.
-const LEGACY_APP_URL = 'http://localhost:8502/?embedded=true';
+// Navigating to this URL reloads the SAME Streamlit app (app.py) with a
+// query param that tells it to render the legacy DNL pipeline UI.
+const RESEARCH_SETUP_URL = '?page=research-setup';
 
 // ---------- DATA (HARDCODED PLACEHOLDERS) ----------
 // TODO: replace with live data from DNL pipeline JSON output
@@ -774,7 +773,18 @@ function renderSidebar() {
 
   sidebar.querySelectorAll('.nav-item').forEach(el => {
     el.addEventListener('click', () => {
-      currentPageId = el.dataset.page;
+      const pageId = el.dataset.page;
+      // Research Setup navigates the TOP window so Streamlit re-runs and
+      // serves the legacy DNL pipeline UI (handled by app.py via ?page=).
+      if (pageId === 'research-setup') {
+        try {
+          window.top.location.href = RESEARCH_SETUP_URL;
+        } catch (e) {
+          window.location.href = RESEARCH_SETUP_URL;
+        }
+        return;
+      }
+      currentPageId = pageId;
       renderSidebar();
       renderMain();
     });
@@ -884,20 +894,21 @@ function renderAnalyticsDashboard() {
 }
 
 function renderResearchSetup() {
-  // Renders the ORIGINAL working DNL Streamlit app (app_legacy.py) inside a
-  // full-bleed iframe. The legacy app contains the real pipeline runner,
-  // source selection, date picker, Run Pipeline button, and live logs.
-  // It must be served separately on LEGACY_APP_URL — see run_all.ps1.
+  // Clicking "Research Setup" in the sidebar navigates the top window to
+  // ?page=research-setup, which makes app.py render the legacy DNL pipeline
+  // UI (app_legacy.py). This function only runs if that navigation is
+  // delayed or blocked — it shows a manual link as a fallback.
   return `
-    <iframe
-      class="legacy-frame"
-      src="${LEGACY_APP_URL}"
-      title="DNL Pipeline — Research Setup"
-      allow="clipboard-read; clipboard-write"
-    ></iframe>
-    <noscript class="legacy-fallback">
-      Enable JavaScript to load the DNL pipeline interface.
-    </noscript>
+    <div class="stub-page">
+      <div class="stub-title">Loading pipeline interface...</div>
+      <div class="stub-subtitle">If this page does not redirect, click the button below.</div>
+      <div style="margin-top:24px">
+        <a class="btn-primary" href="${RESEARCH_SETUP_URL}" target="_top"
+           style="display:inline-flex;align-items:center;gap:8px;text-decoration:none">
+          <span>Open Research Setup</span>
+        </a>
+      </div>
+    </div>
   `;
 }
 
